@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:8000",
   "dependencies": {
     "@nutanix-ui/browserslist-config-prism": "^1.2.0",
     "@nutanix-ui/prism-reactjs": "^2.28.0",

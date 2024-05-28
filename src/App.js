@@ -1,9 +1,8 @@
-import logo from './logo.svg';
 // Import the style sheet.  You only need to do this one time in your project.
 import '@nutanix-ui/prism-reactjs/dist/index.css';
-import { Button, FlexLayout, Input, StackingLayout, Table } from '@nutanix-ui/prism-reactjs';
+import { Button, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, Divider, FlexLayout, Input, StackingLayout, Table } from '@nutanix-ui/prism-reactjs';
 import './App.css';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 
 const columns = [
@@ -12,10 +11,55 @@ const columns = [
     key: "userName"
   },
   {
-    title: "Changes Count",
+    title: "CRs Raised",
     key: "changesCount"
+  },
+  {
+    title: "Added as Reviewer",
+    key: "reviewCount"
+  }, 
+  {
+    title: "Comments Recieved",
+    key: "commentsRecieved"
+  },
+  {
+    title: "+2 given",
+    key: "plusTwoGiven"
+  },
+  {
+    title: "+1 given",
+    key: "plusOneGiven"
+  },
+  {
+    title: "-1 given",
+    key: "minusOneGiven"
+  },
+  {
+    title: "-2 given",
+    key: "minusTwoGiven"
+  },
+  {
+    title: "+2 received",
+    key: "plusTwoReceived"
+  },
+  {
+    title: "+1 received",
+    key: "plusOneReceived"
+  },
+  {
+    title: "-1 received",
+    key: "minusOneReceived"
+  },
+  {
+    title: "-2 received",
+    key: "minusTwoReceived"
   }
 ]
+
+const header = (
+  <DashboardWidgetHeader title="Gerrit Statistics" showCloseIcon={ false } />
+);
+
 
 function App() {
 
@@ -27,38 +71,99 @@ function App() {
     setUserName(e.target.value);
   }
 
+  const getData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/changes/${userName}`);
+      const data = await response.json();
+      setUserData([data]);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
+  }, [userName])
+
   const getDataSource = () => {
-    return [];
+    if(userData){
+      let data =  userData.map((data) => {
+  
+        return {
+          key: userName,
+          userName: userName,
+          changesCount: data.ownChangesCount,
+          reviewCount: data.addedAsReviewer,
+          commentsRecieved: data.comments,
+          plusTwoGiven: data.reviewedChanges.plusTwos,
+          plusOneGiven: data.reviewedChanges.plusOnes,
+          minusOneGiven: data.reviewedChanges.minusOnes,
+          minusTwoGiven: data.reviewedChanges.minusTwos,
+          plusTwoReceived: data.reviews.plusTwos,
+          plusOneReceived: data.reviews.plusOnes,
+          minusOneReceived: data.reviews.minusOnes,
+          minusTwoReceived: data.reviews.minusTwos
+        }
+      });
+      return data;
+    }else{
+      return [];
+    }
   }
+
+  const tableSection = (
+    <FlexLayout padding="0px-10px">
+      <Table
+        showCustomScrollbar = {true}
+        border = {false}
+        rowKey="key"
+        dataSource={ getDataSource() }
+        columns={ columns } 
+        loading = {loading}  
+        wrapperProps={{
+          'data-test-id': 'borderless'
+        }}
+      />
+    </FlexLayout>
+  );
+
+  const bodyContent = (
+    <StackingLayout itemSpacing="0px">
+      {tableSection}
+      <Divider />
+    </StackingLayout>
+  );
 
   return (
     <FlexLayout padding="20px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
-      <FlexLayout>
-        <Input 
-          value={userName} 
-          placeholder='Enter username to get statistics' 
-          onChange={handleUserNameChange} 
-          label='Username'
-          style={{width: '300px'}}
-        />
-        <Button>Fetch</Button>
-      </FlexLayout>
-      {
-        userName &&
-        <Table
-          showCustomScrollbar={true}
-          dataSource={getDataSource()}
-          columns={columns}
-          topSection={{
-            title: "User Statistics",
-          }}
-          loading={loading} 
-          wrapperProps={{
-            "data-test-id": "rule-table",
-          }}
-          customMessages={{noData: "No User Data Found"}}
-        />  
-      }
+        <ContainerLayout padding='10px' style={{width: "90%"}} border={true}>
+          <FlexLayout padding="10px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
+            <FlexLayout>
+              <Input 
+                value={userName} 
+                placeholder='Enter username to get statistics' 
+                onChange={handleUserNameChange} 
+                label='Username'
+                style={{width: '300px'}}
+                loading={loading}
+              />
+              <Button
+                onClick={getData}
+              >
+                Fetch
+              </Button>
+            </FlexLayout>
+            {
+              userName &&
+              <DashboardWidgetLayout
+                header={header}
+                bodyContent = {bodyContent}
+                footer={null}
+                bodyContentProps={{itemFlexBasis: '100pc'}}
+                style={{flexBasis:'100%'}}
+                itemSpacing='0px'
+              />
+            }
+          </FlexLayout>
+        </ContainerLayout>
     </FlexLayout>
   );
 }
