@@ -88,8 +88,8 @@ function App() {
       let data =  userData.map((data) => {
   
         return {
-          key: userName,
-          userName: userName,
+          key: data.userId,
+          userName: data.name,
           changesCount: data.ownChangesCount,
           reviewCount: data.addedAsReviewer,
           commentsRecieved: data.comments,
@@ -110,7 +110,7 @@ function App() {
   }
 
   const tableSection = (
-    <FlexLayout padding="0px-10px">
+    <FlexLayout padding="0px-10px" style={{width:"100%"}}>
       <Table
         showCustomScrollbar = {true}
         border = {false}
@@ -120,6 +120,9 @@ function App() {
         loading = {loading}  
         wrapperProps={{
           'data-test-id': 'borderless'
+        }}
+        customMessages={{
+          noData: 'No data found'
         }}
       />
     </FlexLayout>
@@ -147,12 +150,13 @@ function App() {
               />
               <Button
                 onClick={getData}
+                disabled={userName.length === 0 || loading} 
               >
                 Fetch
               </Button>
             </FlexLayout>
             {
-              userName &&
+              (userData.length > 0) &&
               <DashboardWidgetLayout
                 header={header}
                 bodyContent = {bodyContent}
