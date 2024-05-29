@@ -1,6 +1,6 @@
-import { Button, CloseIcon, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, Divider, FlexLayout, FullPageModal, Input, StackingLayout, Table } from '@nutanix-ui/prism-reactjs';
+import { Button, CloseIcon, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, DatePicker, Divider, FlexLayout, FullPageModal, Input, StackingLayout, Table, TextLabel } from '@nutanix-ui/prism-reactjs';
 import { useCallback, useEffect, useState } from 'react';
-
+import moment from 'moment';
 
 const columns = [
   {
@@ -61,25 +61,27 @@ const header = (
 function UserDetails(props) {
 
   const userId = props.userDetails._account_id;
-  
+
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(false);  
+  const [startDate, setStartDate] = useState(moment().subtract(1, 'weeks'));
+  const [endDate, setEndDate] = useState(moment().startOf('day')); 
 
   const getData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/changes/${userId}`);
+      const response = await fetch(`/api/changes/${userId}?startDate=${startDate.format('YYYY-MM-DD')}&endDate=${endDate.format('YYYY-MM-DD')}`);
       const data = await response.json();
       setUserData([data]);
     } catch (error) {
       console.log(error);
     }
     setLoading(false);
-  }, [])
+  }, [startDate,endDate])
 
-  useEffect(() => {
+  useEffect(()=>{
     getData();
-  }, [getData, userId])
+  },[])
 
   const getDataSource = () => {
     if(userData){
@@ -141,10 +143,42 @@ function UserDetails(props) {
       <CloseIcon key="close" onClick={props.handleClose}/>
       ]}
     >
-      <FlexLayout padding="20px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
+      <FlexLayout padding="20px" flexDirection='column' alignItems='center' justifyContent='center'>
         <ContainerLayout padding='10px' style={{width: "90%"}} border={true}>
-          <FlexLayout padding="10px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
-            <FlexLayout>
+          <FlexLayout padding="10px" flexDirection='column' alignItems='center' justifyContent='center'>
+            <FlexLayout alignItems='flex-end'>
+              <StackingLayout itemSpacing='0px'>
+                <TextLabel>Start Date</TextLabel>
+                <DatePicker
+                  oldDatePicker={false}
+                  inputProps={ { name:'datepicker-select-on-initial-render' } }
+                  onChange={ (selectedDate) => setStartDate(selectedDate) }
+                  defaultValue={startDate}
+                  popupProviderProps={{
+                    popupClassName: 'my-datepicker',
+                    getPopupContainer: () => {
+                      const container = document.querySelector(".right-panel");
+                      return container || document.body;
+                    }
+                  }}
+                />
+              </StackingLayout>
+              <StackingLayout>
+                <TextLabel>End Date</TextLabel>
+                <DatePicker
+                  oldDatePicker={false}
+                  inputProps={ { name:'datepicker-select-on-initial-render' } }
+                  onChange={ (selectedDate) => setEndDate(selectedDate)}
+                  defaultValue={endDate}
+                  popupProviderProps={{
+                    popupClassName: 'my-datepicker',
+                    getPopupContainer: () => {
+                      const container = document.querySelector(".right-panel");
+                      return container || document.body;
+                    }
+                  }}
+                />
+              </StackingLayout>
               <Button
                 onClick={getData}
                 disabled={loading} 

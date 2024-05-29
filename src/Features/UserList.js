@@ -97,17 +97,16 @@ function UserList(){
 
   return(
     <StackingLayout>
-      <FlexLayout padding="20px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
+      <FlexLayout padding="20px" flexDirection='column' alignItems='center' justifyContent='center'>
         <ContainerLayout padding='10px' style={{width: "90%"}} border={true}>
-          <FlexLayout padding="10px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
-            <FlexLayout inemFlexBasis='100pc'>
+          <FlexLayout padding="10px" flexDirection='column' alignItems='center' justifyContent='center'>
+            <FlexLayout>
               <Input 
                 value={userName} 
                 placeholder='Please enter full name or email' 
                 onChange={handleUserNameChange} 
                 label='Name/Email'
                 style={{width: '300px'}}
-                loading={loading}
               />
               <Button
                 onClick={addUser} 
