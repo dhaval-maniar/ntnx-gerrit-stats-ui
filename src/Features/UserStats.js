@@ -1,4 +1,4 @@
-import { Button, CloseIcon, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, DatePicker, Divider, FlexLayout, FullPageModal, Input, StackingLayout, Table, TextLabel } from '@nutanix-ui/prism-reactjs';
+import { Badge, Button, CloseIcon, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, DatePicker, Divider, FlexLayout, FullPageModal, Input, StackingLayout, Table, TextLabel } from '@nutanix-ui/prism-reactjs';
 import { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 
@@ -10,30 +10,6 @@ const columns = [
   {
     title: "CRs Raised",
     key: "changesCount"
-  },
-  {
-    title: "Added as Reviewer",
-    key: "reviewCount"
-  }, 
-  {
-    title: "Comments Recieved",
-    key: "commentsRecieved"
-  },
-  {
-    title: "+2 given",
-    key: "plusTwoGiven"
-  },
-  {
-    title: "+1 given",
-    key: "plusOneGiven"
-  },
-  {
-    title: "-1 given",
-    key: "minusOneGiven"
-  },
-  {
-    title: "-2 given",
-    key: "minusTwoGiven"
   },
   {
     title: "+2 received",
@@ -50,6 +26,30 @@ const columns = [
   {
     title: "-2 received",
     key: "minusTwoReceived"
+  },
+  {
+    title: "Comments Recieved",
+    key: "commentsRecieved"
+  },
+  {
+    title: "Added as Reviewer",
+    key: "reviewCount"
+  }, 
+  {
+    title: "+2 given",
+    key: "plusTwoGiven"
+  },
+  {
+    title: "+1 given",
+    key: "plusOneGiven"
+  },
+  {
+    title: "-1 given",
+    key: "minusOneGiven"
+  },
+  {
+    title: "-2 given",
+    key: "minusTwoGiven"
   }
 ]
 
@@ -93,14 +93,54 @@ function UserDetails(props) {
           changesCount: data.ownChangesCount,
           reviewCount: data.addedAsReviewer,
           commentsRecieved: data.comments,
-          plusTwoGiven: data.reviewedChanges.plusTwos,
-          plusOneGiven: data.reviewedChanges.plusOnes,
-          minusOneGiven: data.reviewedChanges.minusOnes,
-          minusTwoGiven: data.reviewedChanges.minusTwos,
-          plusTwoReceived: data.reviews.plusTwos,
-          plusOneReceived: data.reviews.plusOnes,
-          minusOneReceived: data.reviews.minusOnes,
-          minusTwoReceived: data.reviews.minusTwos
+          plusTwoGiven: <Badge  
+            appearance={Badge.BadgeAppearance.DEFAULT}
+            color='green' 
+            count={data.reviewedChanges.plusTwos}
+            type={Badge.BadgeTypes.TAG}  
+          />,
+          plusOneGiven: <Badge  
+          appearance={Badge.BadgeAppearance.DEFAULT}
+          color='green' 
+          count={data.reviewedChanges.plusOnes}
+          type={Badge.BadgeTypes.TAG}  
+        />,
+          minusOneGiven: <Badge  
+          appearance={Badge.BadgeAppearance.DEFAULT}
+          color='red' 
+          count={data.reviewedChanges.minusOnes}
+          type={Badge.BadgeTypes.TAG}  
+        />,
+          minusTwoGiven: <Badge  
+          appearance={Badge.BadgeAppearance.DEFAULT}
+          color='red' 
+          count={data.reviewedChanges.minusTwos}
+          type={Badge.BadgeTypes.TAG}  
+        />,
+          plusTwoReceived: <Badge  
+          appearance={Badge.BadgeAppearance.DEFAULT}
+          color='green' 
+          count={data.reviews.plusTwos}
+          type={Badge.BadgeTypes.TAG}  
+        />,
+          plusOneReceived: <Badge  
+          appearance={Badge.BadgeAppearance.DEFAULT}
+          color='green' 
+          count={data.reviews.plusOnes}
+          type={Badge.BadgeTypes.TAG}  
+        />,
+          minusOneReceived: <Badge  
+          appearance={Badge.BadgeAppearance.DEFAULT}
+          color='red' 
+          count={data.reviews.minusOnes}
+          type={Badge.BadgeTypes.TAG}  
+        />,
+          minusTwoReceived: <Badge  
+          appearance={Badge.BadgeAppearance.DEFAULT}
+          color='red' 
+          count={data.reviews.minusTwos}
+          type={Badge.BadgeTypes.TAG}  
+        />
         }
       });
       return data;
@@ -138,7 +178,7 @@ function UserDetails(props) {
   return (
     <FullPageModal
       visible={true}
-      title="User Stats"
+      title="User Gerrit Stats"
       headerActions={[
       <CloseIcon key="close" onClick={props.handleClose}/>
       ]}
@@ -147,7 +187,7 @@ function UserDetails(props) {
         <ContainerLayout padding='10px' style={{width: "90%"}} border={true}>
           <FlexLayout padding="10px" flexDirection='column' alignItems='center' justifyContent='center'>
             <FlexLayout alignItems='flex-end'>
-              <StackingLayout itemSpacing='0px'>
+              <StackingLayout itemSpacing='5px'>
                 <TextLabel>Start Date</TextLabel>
                 <DatePicker
                   oldDatePicker={false}
@@ -163,7 +203,7 @@ function UserDetails(props) {
                   }}
                 />
               </StackingLayout>
-              <StackingLayout>
+              <StackingLayout itemSpacing='5px'>
                 <TextLabel>End Date</TextLabel>
                 <DatePicker
                   oldDatePicker={false}
@@ -188,7 +228,6 @@ function UserDetails(props) {
             </FlexLayout>
             {
               <DashboardWidgetLayout
-                header={header}
                 bodyContent = {bodyContent}
                 footer={null}
                 bodyContentProps={{itemFlexBasis: '100pc'}}

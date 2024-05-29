@@ -1,4 +1,4 @@
-import { Button, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, Divider, FlexLayout, Input, StackingLayout, Table } from "@nutanix-ui/prism-reactjs";
+import { Button, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, Divider, FlexLayout, Input, StackingLayout, Table, Title } from "@nutanix-ui/prism-reactjs";
 import { useState } from "react";
 import UserDetails from "./UserStats";
 
@@ -100,6 +100,7 @@ function UserList(){
       <FlexLayout padding="20px" flexDirection='column' alignItems='center' justifyContent='center'>
         <ContainerLayout padding='10px' style={{width: "90%"}} border={true}>
           <FlexLayout padding="10px" flexDirection='column' alignItems='center' justifyContent='center'>
+            <Title data-test-id="size-h3">Users List</Title>
             <FlexLayout>
               <Input 
                 value={userName} 
@@ -110,6 +111,7 @@ function UserList(){
               />
               <Button
                 onClick={addUser} 
+                disabled={loading || !userName}
               >
                 Add User
               </Button>
