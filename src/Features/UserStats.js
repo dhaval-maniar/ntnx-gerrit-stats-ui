@@ -181,10 +181,11 @@ function UserDetails(props) {
   const oldestChangesData = () => {
     if(userData && userData[0] && userData[0]['oldestOpenChanges']){
       let data = userData[0].oldestOpenChanges.map((item)=> {
+        const localDate = new Date(item.created);
         return {
           id: item.id,
           url: <Link style={{color:'#22a5f7'}} data-test-id="inline-with-href" type="inline" href={item.url}>{item.url}</Link>,
-          createdOn: item.created
+          createdOn: localDate.toString()
         }
       });
       return data;
@@ -205,7 +206,7 @@ function UserDetails(props) {
           'data-test-id': 'borderless'
         }}
         customMessages={{
-          noData: 'No data found'
+          noData: 'No open changes'
         }}
       />
     </FlexLayout>
