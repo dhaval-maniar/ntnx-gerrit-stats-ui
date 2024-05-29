@@ -100,7 +100,7 @@ function UserList(){
       <FlexLayout padding="20px" flexDirection='column' alignItems='center' justifyContent='center'>
         <ContainerLayout padding='10px' style={{width: "90%"}} border={true}>
           <FlexLayout padding="10px" flexDirection='column' alignItems='center' justifyContent='center'>
-            <Title data-test-id="size-h3">Users List</Title>
+            <Title data-test-id="size-h2" size="h2">Users List</Title>
             <FlexLayout>
               <Input 
                 value={userName} 

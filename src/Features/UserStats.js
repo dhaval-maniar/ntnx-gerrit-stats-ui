@@ -1,4 +1,4 @@
-import { Badge, Button, CloseIcon, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, DatePicker, Divider, FlexLayout, FullPageModal, Input, StackingLayout, Table, TextLabel } from '@nutanix-ui/prism-reactjs';
+import { Badge, Button, CloseIcon, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, DatePicker, Divider, FlexLayout, FullPageModal, Input, Link, StackingLayout, Table, TextLabel, Title } from '@nutanix-ui/prism-reactjs';
 import { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 
@@ -50,6 +50,17 @@ const columns = [
   {
     title: "-2 given",
     key: "minusTwoGiven"
+  }
+]
+
+const oldestChangesColumns = [
+  {
+    title: "Gerrit URL",
+    key: "url"
+  },
+  {
+    title: "Created On",
+    key: "createdOn"
   }
 ]
 
@@ -157,7 +168,39 @@ function UserDetails(props) {
         rowKey="key"
         dataSource={ getDataSource() }
         columns={ columns } 
-        loading = {loading}  
+        wrapperProps={{
+          'data-test-id': 'borderless'
+        }}
+        customMessages={{
+          noData: 'No data found'
+        }}
+      />
+    </FlexLayout>
+  );
+
+  const oldestChangesData = () => {
+    if(userData && userData[0] && userData[0]['oldestOpenChanges']){
+      let data = userData[0].oldestOpenChanges.map((item)=> {
+        return {
+          id: item.id,
+          url: <Link style={{color:'#22a5f7'}} data-test-id="inline-with-href" type="inline" href={item.url}>{item.url}</Link>,
+          createdOn: item.created
+        }
+      });
+      return data;
+    } else {
+      return [];
+    }
+  }
+
+  const oldestChangesTable = (
+    <FlexLayout padding="0px-10px" style={{width:"100%"}}>
+      <Table
+        showCustomScrollbar = {true}
+        border = {false}
+        rowKey="id"
+        dataSource={ oldestChangesData() }
+        columns={ oldestChangesColumns } 
         wrapperProps={{
           'data-test-id': 'borderless'
         }}
@@ -170,7 +213,14 @@ function UserDetails(props) {
 
   const bodyContent = (
     <StackingLayout itemSpacing="0px">
+      <Divider />
       {tableSection}
+      <Divider />
+      <FlexLayout itemSpacing="20px" padding="10px">
+        <Title size='h3'>Open Changes</Title>
+      </FlexLayout>
+      <Divider />
+      {oldestChangesTable}
       <Divider />
     </StackingLayout>
   );
@@ -184,7 +234,7 @@ function UserDetails(props) {
       ]}
     >
       <FlexLayout padding="20px" flexDirection='column' alignItems='center' justifyContent='center'>
-        <ContainerLayout padding='10px' style={{width: "90%"}} border={true}>
+        <ContainerLayout padding='10px' style={{width: "100%"}} border={true}>
           <FlexLayout padding="10px" flexDirection='column' alignItems='center' justifyContent='center'>
             <FlexLayout alignItems='flex-end'>
               <StackingLayout itemSpacing='5px'>
@@ -233,6 +283,7 @@ function UserDetails(props) {
                 bodyContentProps={{itemFlexBasis: '100pc'}}
                 style={{flexBasis:'100%', width: '100%'}}
                 itemSpacing='0px'
+                loading={loading}
               />
             }
           </FlexLayout>
