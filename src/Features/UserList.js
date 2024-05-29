@@ -1,5 +1,6 @@
 import { Button, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, Divider, FlexLayout, Input, StackingLayout, Table } from "@nutanix-ui/prism-reactjs";
 import { useState } from "react";
+import UserDetails from "./UserStats";
 
 
 const columns = [
@@ -40,12 +41,24 @@ function UserList(){
     setLoading(false);
   }
 
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [userStatsModal, setUserStatsModal] = useState(false);
+
+  const onUserClick = (userId) => {
+    setSelectedUserId(userList.find((item) => item._account_id === userId));
+    setUserStatsModal(true);
+  }
+
+  const handleClose = () => {
+    setUserStatsModal(false);
+  }
+
   const getDataSource = () => {
     if(userList){
       let data =  userList.map((item) => {
         return {
           key: item._account_id,
-          name: item.name,
+          name: <Button type="icon-link" onClick={(e) => onUserClick(item._account_id)}>{item.name}</Button>,
           gerritUserName: item.username,
           email: item.email
         }
@@ -83,7 +96,8 @@ function UserList(){
   );
 
   return(
-    <FlexLayout padding="20px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
+    <StackingLayout>
+      <FlexLayout padding="20px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
         <ContainerLayout padding='10px' style={{width: "90%"}} border={true}>
           <FlexLayout padding="10px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
             <FlexLayout inemFlexBasis='100pc'>
@@ -114,7 +128,17 @@ function UserList(){
             }
           </FlexLayout>
         </ContainerLayout>
-    </FlexLayout>
+      </FlexLayout>
+      {
+        userStatsModal && 
+        <UserDetails 
+          userDetails={selectedUserId} 
+          handleClose={handleClose}
+          onClose={() => setUserStatsModal(false)}
+        />
+      }
+    </StackingLayout>
+    
   );
 }
 

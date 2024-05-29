@@ -1,5 +1,5 @@
-import { Button, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, Divider, FlexLayout, Input, StackingLayout, Table } from '@nutanix-ui/prism-reactjs';
-import { useCallback, useState } from 'react';
+import { Button, CloseIcon, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, Divider, FlexLayout, FullPageModal, Input, StackingLayout, Table } from '@nutanix-ui/prism-reactjs';
+import { useCallback, useEffect, useState } from 'react';
 
 
 const columns = [
@@ -58,27 +58,28 @@ const header = (
 );
 
 
-function UserDetails() {
+function UserDetails(props) {
 
-  const [userName, setUserName] = useState('');
+  const userId = props.userDetails._account_id;
+  
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(false);  
-  
-  const handleUserNameChange = (e) => {
-    setUserName(e.target.value);
-  }
 
   const getData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/changes/${userName}`);
+      const response = await fetch(`/api/changes/${userId}`);
       const data = await response.json();
       setUserData([data]);
     } catch (error) {
       console.log(error);
     }
     setLoading(false);
-  }, [userName])
+  }, [])
+
+  useEffect(() => {
+    getData();
+  }, [getData, userId])
 
   const getDataSource = () => {
     if(userData){
@@ -86,7 +87,7 @@ function UserDetails() {
   
         return {
           key: data.userId,
-          userName: data.name,
+          userName: props.userDetails.name,
           changesCount: data.ownChangesCount,
           reviewCount: data.addedAsReviewer,
           commentsRecieved: data.comments,
@@ -133,27 +134,25 @@ function UserDetails() {
   );
 
   return (
-    <FlexLayout padding="20px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
+    <FullPageModal
+      visible={true}
+      title="User Stats"
+      headerActions={[
+      <CloseIcon key="close" onClick={props.handleClose}/>
+      ]}
+    >
+      <FlexLayout padding="20px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
         <ContainerLayout padding='10px' style={{width: "90%"}} border={true}>
           <FlexLayout padding="10px" itemFlexBasis='100pc' flexDirection='column' alignItems='center' justifyContent='center'>
             <FlexLayout>
-              <Input 
-                value={userName} 
-                placeholder='Enter username to get statistics' 
-                onChange={handleUserNameChange} 
-                label='Username'
-                style={{width: '300px'}}
-                loading={loading}
-              />
               <Button
                 onClick={getData}
-                disabled={userName.length === 0 || loading} 
+                disabled={loading} 
               >
                 Fetch
               </Button>
             </FlexLayout>
             {
-              (userData.length > 0) &&
               <DashboardWidgetLayout
                 header={header}
                 bodyContent = {bodyContent}
@@ -165,7 +164,8 @@ function UserDetails() {
             }
           </FlexLayout>
         </ContainerLayout>
-    </FlexLayout>
+      </FlexLayout>
+    </FullPageModal>
   );
 }
 
