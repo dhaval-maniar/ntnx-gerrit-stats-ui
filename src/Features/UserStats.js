@@ -32,6 +32,10 @@ const columns = [
     key: "commentsRecieved"
   },
   {
+    title: "Comments / Change",
+    key: "commentsPerChange"
+  },
+  {
     title: "Added as Reviewer",
     key: "reviewCount"
   }, 
@@ -104,28 +108,29 @@ function UserDetails(props) {
           changesCount: data.ownChangesCount,
           reviewCount: data.addedAsReviewer,
           commentsRecieved: data.comments,
+          commentsPerChange: data.commentsPerChange,
           plusTwoGiven: <Badge  
             appearance={Badge.BadgeAppearance.DEFAULT}
             color='green' 
-            count={data.reviewedChanges.plusTwos}
+            count={data.reviewedChanges.counts.plusTwos}
             type={Badge.BadgeTypes.TAG}  
           />,
           plusOneGiven: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='green' 
-          count={data.reviewedChanges.plusOnes}
+          count={data.reviewedChanges.counts.plusOnes}
           type={Badge.BadgeTypes.TAG}  
         />,
           minusOneGiven: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='red' 
-          count={data.reviewedChanges.minusOnes}
+          count={data.reviewedChanges.counts.minusOnes}
           type={Badge.BadgeTypes.TAG}  
         />,
           minusTwoGiven: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='red' 
-          count={data.reviewedChanges.minusTwos}
+          count={data.reviewedChanges.counts.minusTwos}
           type={Badge.BadgeTypes.TAG}  
         />,
           plusTwoReceived: <Badge  
