@@ -1,6 +1,7 @@
 import { Badge, Button, CloseIcon, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, DatePicker, Divider, FlexLayout, FullPageModal, Input, Link, StackingLayout, Table, TextLabel, Title } from '@nutanix-ui/prism-reactjs';
 import { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
+import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '@nutanix-ui/recharts';
 
 const columns = [
   {
@@ -108,7 +109,7 @@ function UserDetails(props) {
           changesCount: data.ownChangesCount,
           reviewCount: data.addedAsReviewer,
           commentsRecieved: data.comments,
-          commentsPerChange: data.commentsPerChange,
+          commentsPerChange: parseFloat(data.commentsPerChange).toFixed(2),
           plusTwoGiven: <Badge  
             appearance={Badge.BadgeAppearance.DEFAULT}
             color='green' 
@@ -217,6 +218,59 @@ function UserDetails(props) {
     </FlexLayout>
   );
 
+  const chartData = () => {
+    if(userData && userData[0]){
+      const data = [
+        {
+          name: "Mon",
+          reviews: userData[0].reviewedChanges.reviewsByday["1"] || 0
+        },
+        {
+          name: "Tues",
+          reviews: userData[0].reviewedChanges.reviewsByday["2"] || 0
+        },
+        {
+          name: "Wed",
+          reviews: userData[0].reviewedChanges.reviewsByday["3"] || 0
+        },
+        {
+          name: "Thurs",
+          reviews: userData[0].reviewedChanges.reviewsByday["4"] || 0
+        },
+        {
+          name: "Fri",
+          reviews: userData[0].reviewedChanges.reviewsByday["5"] || 0
+        }
+      ]
+      return data;
+    } else {
+      return null;
+    }
+  }
+
+  const reviewChart = (
+    <FlexLayout padding="0px-10px" style={{width:"100%"}} justifyContent='center' alignItems='center'>
+      <BarChart
+        width={ 500 }
+        height={ 300 }
+        data = {chartData()}
+        margin={ {
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5
+        } }
+      >
+        <CartesianGrid />
+        <XAxis dataKey="name" interval={ 0 }/>
+        <YAxis />
+        <Tooltip  />
+        <Legend />
+        <Bar dataKey="reviews" minPointSize={ 10 }/>
+      </BarChart>
+    </FlexLayout>
+  );
+
   const bodyContent = (
     <StackingLayout itemSpacing="0px">
       <Divider />
@@ -228,6 +282,11 @@ function UserDetails(props) {
       <Divider />
       {oldestChangesTable}
       <Divider />
+      <FlexLayout itemSpacing="20px" padding="10px">
+        <Title size='h3'>Reviews by day of the week</Title>
+      </FlexLayout>
+      <Divider />
+      {reviewChart}
     </StackingLayout>
   );
 
