@@ -69,6 +69,17 @@ const oldestChangesColumns = [
   }
 ]
 
+const maxCommentsColumns = [
+  {
+    title: "Gerrit URL",
+    key: "url"
+  },
+  {
+    title: "Comments",
+    key: "comments"
+  }
+]
+
 const header = (
   <DashboardWidgetHeader title="Gerrit Statistics" showCloseIcon={ false } />
 );
@@ -226,6 +237,37 @@ function UserDetails(props) {
     </FlexLayout>
   );
 
+  const mostCommentsData = () => {
+    if(userData && userData[0] && userData[0]['maxComments']){
+      let maxComments = userData[0].maxComments;
+      return [{
+        id: maxComments.id,
+        url: <Link style={{color:'#22a5f7'}} data-test-id="inline-with-href" type="inline" href={maxComments.url}>{maxComments.url}</Link>,
+        comments: maxComments.count
+      }]
+    }else{
+      return [];
+    }
+  }
+
+  const mostCommentstable = (
+    <FlexLayout padding="0px-10px" style={{width:"100%"}}>
+      <Table
+        showCustomScrollbar = {true}
+        border = {false}
+        rowKey="id"
+        dataSource={ mostCommentsData() }
+        columns={ maxCommentsColumns } 
+        wrapperProps={{
+          'data-test-id': 'borderless'
+        }}
+        customMessages={{
+          noData: 'No changes'
+        }}
+      />
+    </FlexLayout>
+  )
+
   const chartData = () => {
     if(userData && userData[0]){
       const data = [
@@ -285,16 +327,22 @@ function UserDetails(props) {
       {tableSection}
       <Divider />
       <FlexLayout itemSpacing="20px" padding="10px">
+        <Title size='h3'>Reviews by day of the week</Title>
+      </FlexLayout>
+      <Divider />
+      {reviewChart}
+      <Divider />
+      <FlexLayout itemSpacing="20px" padding="10px">
         <Title size='h3'>Open Changes</Title>
       </FlexLayout>
       <Divider />
       {oldestChangesTable}
       <Divider />
       <FlexLayout itemSpacing="20px" padding="10px">
-        <Title size='h3'>Reviews by day of the week</Title>
+        <Title size='h3'>Change with most comments</Title>
       </FlexLayout>
       <Divider />
-      {reviewChart}
+      {mostCommentstable}
     </StackingLayout>
   );
 
