@@ -1,4 +1,4 @@
-import { Button, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, Divider, FlexLayout, Input, StackingLayout, Table, Title } from "@nutanix-ui/prism-reactjs";
+import { Button, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, Divider, FlexLayout, Input, Notification, NotificationItem, NotificationTrigger, StackingLayout, Table, Title } from "@nutanix-ui/prism-reactjs";
 import { useState } from "react";
 import UserDetails from "./UserStats";
 
@@ -32,11 +32,29 @@ function UserList(){
     setUserName(e.target.value);
   }
 
+  const handleSuccessOrFailure = (success, msg) => {
+    NotificationTrigger.add({
+      id: 'User-Notification',
+      type: success ? NotificationItem.NotificationIconType.SUCCESS : NotificationItem.NotificationIconType.ERROR,
+      message: msg,
+      autoDismissDelaySecs: 2.5
+    })
+  }
+
   const addUser = async () => {
     setLoading(true);
     const response = await fetch(`api/members/${userName}`);
-    const data = await response.json();
-    setUserList([...userList, data[0]]);
+    if(response.status < 300){
+      const data = await response.json();
+      if(data.length === 0){
+        handleSuccessOrFailure(false, 'User not found');
+      }else{
+        handleSuccessOrFailure(true, 'User added successfully');
+        setUserList([...userList, data[0]]);
+      }
+    }else {
+      handleSuccessOrFailure(false, 'Error while adding user');
+    }
     setUserName('');
     setLoading(false);
   }
@@ -117,7 +135,6 @@ function UserList(){
               </Button>
             </FlexLayout>
             {
-              // (userList.length > 0) &&
               <DashboardWidgetLayout
                 header={header}
                 bodyContent = {bodyContent}
@@ -136,10 +153,19 @@ function UserList(){
           userDetails={selectedUserId} 
           handleClose={handleClose}
           onClose={() => setUserStatsModal(false)}
+          handleSuccessOrFailure={handleSuccessOrFailure}
         />
       }
+      <Notification>
+        <div
+        style={ {
+          position: 'fixed',
+          top: '80px',
+          right: '340px'
+        } }
+        />
+      </Notification>
     </StackingLayout>
-    
   );
 }
 

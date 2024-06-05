@@ -98,10 +98,16 @@ function UserDetails(props) {
     setLoading(true);
     try {
       const response = await fetch(`/api/changes/${userId}?startDate=${startDate.format('YYYY-MM-DD')}&endDate=${endDate.format('YYYY-MM-DD')}`);
-      const data = await response.json();
-      setUserData([data]);
+      if(response.status < 300){
+        props.handleSuccessOrFailure(true, 'User statistics fetched successfully');
+        const data = await response.json();
+        setUserData([data]);
+      }else{
+        throw new Error('Error while fetching user statistics.');
+      }
     } catch (error) {
-      console.log(error);
+      props.handleSuccessOrFailure(false, 'Error while fetching user statistics');
+      props.handleClose();
     }
     setLoading(false);
   }, [startDate,endDate])
@@ -238,7 +244,7 @@ function UserDetails(props) {
   );
 
   const mostCommentsData = () => {
-    if(userData && userData[0] && userData[0]['maxComments']){
+    if(userData && userData[0] && userData[0]['maxComments'] && userData[0].maxComments.id){
       let maxComments = userData[0].maxComments;
       return [{
         id: maxComments.id,
