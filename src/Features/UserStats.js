@@ -115,48 +115,56 @@ function UserDetails(props) {
             color='green' 
             count={data.reviewedChanges.counts.plusTwos}
             type={Badge.BadgeTypes.TAG}  
+            overflowCount={1000}
           />,
           plusOneGiven: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='green' 
           count={data.reviewedChanges.counts.plusOnes}
           type={Badge.BadgeTypes.TAG}  
+          overflowCount={1000}
         />,
           minusOneGiven: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='red' 
           count={data.reviewedChanges.counts.minusOnes}
-          type={Badge.BadgeTypes.TAG}  
+          type={Badge.BadgeTypes.TAG}
+          overflowCount={1000}
         />,
           minusTwoGiven: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='red' 
           count={data.reviewedChanges.counts.minusTwos}
           type={Badge.BadgeTypes.TAG}  
+          overflowCount={1000}
         />,
           plusTwoReceived: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='green' 
           count={data.reviews.plusTwos}
-          type={Badge.BadgeTypes.TAG}  
+          type={Badge.BadgeTypes.TAG}
+          overflowCount={1000}
         />,
           plusOneReceived: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='green' 
           count={data.reviews.plusOnes}
           type={Badge.BadgeTypes.TAG}  
+          overflowCount={1000}
         />,
           minusOneReceived: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='red' 
           count={data.reviews.minusOnes}
           type={Badge.BadgeTypes.TAG}  
+          overflowCount={1000}
         />,
           minusTwoReceived: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='red' 
           count={data.reviews.minusTwos}
           type={Badge.BadgeTypes.TAG}  
+          overflowCount={1000}
         />
         }
       });
