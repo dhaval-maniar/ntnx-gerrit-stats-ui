@@ -80,6 +80,17 @@ const maxCommentsColumns = [
   }
 ]
 
+const longestAndShortestColumns = [
+  {
+    title: "Gerrit URL",
+    key: "url"
+  },
+  {
+    title: "Time",
+    key: "time"
+  }
+]
+
 const header = (
   <DashboardWidgetHeader title="Gerrit Statistics" showCloseIcon={ false } />
 );
@@ -274,6 +285,48 @@ function UserDetails(props) {
     </FlexLayout>
   )
 
+  const longestAndShortestData = () => {
+    if(userData && userData[0] && userData[0]['longestAndShortest']){
+      let longest = userData[0].longestAndShortest.longest;
+      let shortest = userData[0].longestAndShortest.shortest;
+      if(!longest.id && !shortest.id){
+        return [];
+      }
+      return [
+        {
+          id: longest.id,
+          url: <Link style={{color:'#22a5f7'}} data-test-id="inline-with-href" type="inline" href={longest.url}>{longest.url}</Link>,
+          time: longest.time
+        },
+        {
+          id: shortest.id,
+          url: <Link style={{color:'#22a5f7'}} data-test-id="inline-with-href" type="inline" href={shortest.url}>{shortest.url}</Link>,
+          time: shortest.time
+        }
+      ]
+    }else{
+      return [];
+    }
+  }  
+
+  const longestAndShortestTable = (
+    <FlexLayout padding="0px-10px" style={{width:"100%"}}>
+      <Table
+        showCustomScrollbar = {true}
+        border = {false}
+        rowKey="id"
+        dataSource={ longestAndShortestData() }
+        columns={ longestAndShortestColumns } 
+        wrapperProps={{
+          'data-test-id': 'borderless'
+        }}
+        customMessages={{
+          noData: 'No changes merged'
+        }}
+      />
+    </FlexLayout>
+  )
+
   const chartData = () => {
     if(userData && userData[0]){
       const data = [
@@ -333,7 +386,7 @@ function UserDetails(props) {
       {tableSection}
       <Divider />
       <FlexLayout itemSpacing="20px" padding="10px">
-        <Title size='h3'>Reviews by day of the week</Title>
+        <Title size='h3'>Reviews by Day of the Week</Title>
       </FlexLayout>
       <Divider />
       {reviewChart}
@@ -345,10 +398,16 @@ function UserDetails(props) {
       {oldestChangesTable}
       <Divider />
       <FlexLayout itemSpacing="20px" padding="10px">
-        <Title size='h3'>Change with most comments</Title>
+        <Title size='h3'>Change with Most Comments</Title>
       </FlexLayout>
       <Divider />
       {mostCommentstable}
+      <Divider />
+      <FlexLayout itemSpacing="20px" padding="10px">
+        <Title size='h3'>Changes with the Longest and Shortest Merge Times</Title>
+      </FlexLayout>
+      <Divider />
+      {longestAndShortestTable}
     </StackingLayout>
   );
 
