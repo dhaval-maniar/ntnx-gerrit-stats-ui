@@ -1,5 +1,5 @@
 import { Button, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, Divider, FlexLayout, Input, Notification, NotificationItem, NotificationTrigger, StackingLayout, Table, Title } from "@nutanix-ui/prism-reactjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UserDetails from "./UserStats";
 
 
@@ -28,6 +28,13 @@ function UserList(){
   const [loading, setLoading] = useState(false);
   const [userList, setUserList] = useState([]);
 
+  useEffect(()=>{
+    const data = localStorage.getItem('userList');
+    if(data){
+      setUserList(JSON.parse(data));
+    }
+  }, [])
+
   const handleUserNameChange = (e) => {
     setUserName(e.target.value);
   }
@@ -51,6 +58,7 @@ function UserList(){
       }else{
         handleSuccessOrFailure(true, 'User added successfully');
         setUserList([...userList, data[0]]);
+        localStorage.setItem('userList', JSON.stringify([...userList, data[0]]));
       }
     }else {
       handleSuccessOrFailure(false, 'Error while adding user');
