@@ -1,4 +1,4 @@
-import { Badge, Button, CloseIcon, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, DatePicker, Divider, FlexLayout, FullPageModal, Input, Link, StackingLayout, Table, TextLabel, Title } from '@nutanix-ui/prism-reactjs';
+import { Badge, Button, CloseIcon, ContainerLayout, DashboardWidgetHeader, DashboardWidgetLayout, DatePicker, Divider, FlexLayout, FullPageModal, Input, Link, Modal, StackingLayout, Table, TextLabel, Title } from '@nutanix-ui/prism-reactjs';
 import { useCallback, useEffect, useState } from 'react';
 import moment from 'moment';
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '@nutanix-ui/recharts';
@@ -127,6 +127,16 @@ function UserDetails(props) {
     getData();
   },[])
 
+  const [changesModal, setChangesModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalData, setModalData] = useState([]);
+
+  const handleModalClose = () => {
+    setChangesModal(false);
+    setModalTitle('');  
+    setModalData([]);
+  }
+
   const getDataSource = () => {
     if(userData){
       let data =  userData.map((data) => {
@@ -141,30 +151,50 @@ function UserDetails(props) {
           plusTwoGiven: <Badge  
             appearance={Badge.BadgeAppearance.DEFAULT}
             color='green' 
-            count={data.reviewedChanges.counts.plusTwos}
+            count={data.reviewedChanges.plusTwos.length}
             type={Badge.BadgeTypes.TAG}  
             overflowCount={1000}
+            onClick={() => {
+              setChangesModal(true);
+              setModalTitle('Changes with +2 given');
+              setModalData(data.reviewedChanges.plusTwos)
+            }}
           />,
           plusOneGiven: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='green' 
-          count={data.reviewedChanges.counts.plusOnes}
+          count={data.reviewedChanges.plusOnes.length}
           type={Badge.BadgeTypes.TAG}  
           overflowCount={1000}
+          onClick={() => {
+            setChangesModal(true);
+            setModalTitle('Changes with +1 given');
+            setModalData(data.reviewedChanges.plusOnes)
+          }}
         />,
           minusOneGiven: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='red' 
-          count={data.reviewedChanges.counts.minusOnes}
+          count={data.reviewedChanges.minusOnes.length}
           type={Badge.BadgeTypes.TAG}
           overflowCount={1000}
+          onClick={() => {
+            setChangesModal(true);
+            setModalTitle('Changes with -1 given');
+            setModalData(data.reviewedChanges.minusOnes)
+          }}
         />,
           minusTwoGiven: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='red' 
-          count={data.reviewedChanges.counts.minusTwos}
+          count={data.reviewedChanges.minusTwos.length}
           type={Badge.BadgeTypes.TAG}  
           overflowCount={1000}
+          onClick={() => {
+            setChangesModal(true);
+            setModalTitle('Changes with -2 given');
+            setModalData(data.reviewedChanges.minusTwos)
+          }}
         />,
           plusTwoReceived: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
@@ -475,6 +505,47 @@ function UserDetails(props) {
           </FlexLayout>
         </ContainerLayout>
       </FlexLayout>
+      <Modal
+        visible={changesModal}
+        title={modalTitle}
+        onClose={handleModalClose}
+        headerActions={[
+          <Button
+            key="save-btn"
+            onClick={ handleModalClose }
+            type={ Button.ButtonTypes.ICON_SECONDARY }
+          >
+            <CloseIcon key="close" />
+          </Button>
+        ]}
+        footer={null}
+      >
+        <FlexLayout padding="0px-10px" style={{width:"100%"}}>
+          <Table
+            showCustomScrollbar = {true}
+            border = {false}
+            rowKey="id"
+            dataSource={ modalData.map((item) => {
+              return {
+                ...item,
+                url: <Link style={{color:'#22a5f7'}} data-test-id="inline-with-href" type="inline" target="_blank" href={item.url}>{item.url}</Link>
+              }
+            }) }
+            columns={ [
+              {
+                title: "Changes URL",
+                key: "url"
+              }
+            ] } 
+            wrapperProps={{
+              'data-test-id': 'borderless'
+            }}
+            customMessages={{
+              noData: 'No ' + modalTitle.toLowerCase()
+            }}
+          />
+        </FlexLayout>
+      </Modal>
     </FullPageModal>
   );
 }
