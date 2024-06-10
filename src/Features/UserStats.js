@@ -199,30 +199,50 @@ function UserDetails(props) {
           plusTwoReceived: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='green' 
-          count={data.reviews.plusTwos}
+          count={data.reviews.plusTwos.length}
           type={Badge.BadgeTypes.TAG}
           overflowCount={1000}
+          onClick={() => {
+            setChangesModal(true);
+            setModalTitle('Changes with +2 received');
+            setModalData(data.reviews.plusTwos)
+          }}
         />,
           plusOneReceived: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='green' 
-          count={data.reviews.plusOnes}
+          count={data.reviews.plusOnes.length}
           type={Badge.BadgeTypes.TAG}  
           overflowCount={1000}
+          onClick={() => {
+            setChangesModal(true);
+            setModalTitle('Changes with +1 received');
+            setModalData(data.reviews.plusOnes)
+          }}
         />,
           minusOneReceived: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='red' 
-          count={data.reviews.minusOnes}
+          count={data.reviews.minusOnes.length}
           type={Badge.BadgeTypes.TAG}  
           overflowCount={1000}
+          onClick={() => {
+            setChangesModal(true);
+            setModalTitle('Changes with -1 received');
+            setModalData(data.reviews.minusOnes)
+          }}
         />,
           minusTwoReceived: <Badge  
           appearance={Badge.BadgeAppearance.DEFAULT}
           color='red' 
-          count={data.reviews.minusTwos}
+          count={data.reviews.minusTwos.length}
           type={Badge.BadgeTypes.TAG}  
           overflowCount={1000}
+          onClick={() => {
+            setChangesModal(true);
+            setModalTitle('Changes with -2 received');
+            setModalData(data.reviews.minusTwos)
+          }}
         />
         }
       });
