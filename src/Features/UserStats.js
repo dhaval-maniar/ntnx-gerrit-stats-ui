@@ -146,7 +146,11 @@ function UserDetails(props) {
           userName: props.userDetails.name,
           changesCount: data.ownChangesCount,
           reviewCount: data.addedAsReviewer,
-          commentsRecieved: data.comments,
+          commentsRecieved: <Button type={Button.ButtonTypes.TEXT_NORMAL} onClick={() => {
+            setChangesModal(true);
+            setModalTitle('Comments Received');
+            setModalData(data.comments.changes)
+          }}>{data.comments.total}</Button>,
           commentsPerChange: parseFloat(data.commentsPerChange).toFixed(2),
           plusTwoGiven: <Badge  
             appearance={Badge.BadgeAppearance.DEFAULT}
