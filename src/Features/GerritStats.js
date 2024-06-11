@@ -111,7 +111,7 @@ const GerritStats = forwardRef((props,ref) => {
             setModalTitle('Comments Received');
             setModalData(data.comments.changes)
           }}>{data.comments.total}</Button>,
-          commentsPerChange: parseFloat(data.commentsPerChange).toFixed(2),
+          commentsPerChange: parseFloat(data.comments.total/(data.ownChangesCount ? data.ownChangesCount : 1)).toFixed(2),
           plusTwoGiven: <Badge  
             appearance={Badge.BadgeAppearance.DEFAULT}
             color='green' 
