@@ -64,7 +64,7 @@ const GerritStats = forwardRef((props,ref) => {
   const getData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/changes/${props.userId}?startDate=${props.startDate.format('YYYY-MM-DD')}&endDate=${props.endDate.format('YYYY-MM-DD')}`);
+      const response = await fetch(`/api/changes/stats/${props.userId}?startDate=${props.startDate.format('YYYY-MM-DD')}&endDate=${props.endDate.format('YYYY-MM-DD')}`);
       if(response.status < 300){
         props.handleSuccessOrFailure(true, 'User statistics fetched successfully');
         const data = await response.json();
