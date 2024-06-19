@@ -4,6 +4,7 @@ import moment from 'moment';
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '@nutanix-ui/recharts';
 import GerritStats from './GerritStats';
 import CrStats from './CrStats';
+import OpenChanges from './OpenChanges';
 
 const data = [
   {
@@ -28,28 +29,6 @@ const oldestChangesColumns = [
   {
     title: "Created On",
     key: "createdOn"
-  }
-]
-
-const maxCommentsColumns = [
-  {
-    title: "Gerrit URL",
-    key: "url"
-  },
-  {
-    title: "Comments",
-    key: "comments"
-  }
-]
-
-const longestAndShortestColumns = [
-  {
-    title: "Gerrit URL",
-    key: "url"
-  },
-  {
-    title: "Time",
-    key: "time"
   }
 ]
 
@@ -171,6 +150,15 @@ function UserDetails(props) {
         <>
           <Divider />
             <CrStats userId={userId} startDate={startDate} endDate={endDate} handleSuccessOrFailure={props.handleSuccessOrFailure} handleClose={props.handleClose} name={props.userDetails.name} ref={childRef} />
+          <Divider />
+        </>
+      )
+    }
+    if(tab === "openChanges"){
+      return (
+        <>
+          <Divider />
+            <OpenChanges userId={userId} startDate={startDate} endDate={endDate} handleSuccessOrFailure={props.handleSuccessOrFailure} handleClose={props.handleClose} name={props.userDetails.name} ref={childRef} />
           <Divider />
         </>
       )
