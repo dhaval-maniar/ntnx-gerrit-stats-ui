@@ -65,6 +65,7 @@ const OpenChanges = forwardRef((props,ref) => {
         rowKey="id"
         dataSource={ oldestChangesData() }
         columns={ oldestChangesColumns } 
+        loading={loading}
         wrapperProps={{
           'data-test-id': 'borderless'
         }}
