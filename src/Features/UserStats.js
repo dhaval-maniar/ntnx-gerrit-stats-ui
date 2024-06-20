@@ -1,7 +1,6 @@
-import { Button, CloseIcon, ContainerLayout, DashboardWidgetLayout, DatePicker, Divider, FlexLayout, FullPageModal, Link, StackingLayout, Table, Tabs, TextLabel, Title } from '@nutanix-ui/prism-reactjs';
+import { Button, CloseIcon, ContainerLayout, DashboardWidgetLayout, DatePicker, Divider, FlexLayout, FullPageModal, StackingLayout, Tabs, TextLabel } from '@nutanix-ui/prism-reactjs';
 import { useRef, useState } from 'react';
 import moment from 'moment';
-import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '@nutanix-ui/recharts';
 import GerritStats from './GerritStats';
 import CrStats from './CrStats';
 import OpenChanges from './OpenChanges';
@@ -19,6 +18,10 @@ const data = [
   {
     title: "Open Changes",
     key: "openChanges"
+  },
+  {
+    title: "Reviews by Filter",
+    key: "reviewsByFilter"
   }
 ]
 
@@ -31,7 +34,6 @@ function UserDetails(props) {
 
   const userId = props.userDetails._account_id;
 
-  const [userData, setUserData] = useState([]);
   const [startDate, setStartDate] = useState(moment().subtract(1, 'weeks'));
   const [endDate, setEndDate] = useState(moment().startOf('day')); 
 
@@ -39,67 +41,12 @@ function UserDetails(props) {
     setActiveTab(tabKey);
   }
 
-  const chartData = () => {
-    if(userData && userData[0]){
-      const data = [
-        {
-          name: "Mon",
-          reviews: userData[0].reviewedChanges.reviewsByday["1"] || 0
-        },
-        {
-          name: "Tues",
-          reviews: userData[0].reviewedChanges.reviewsByday["2"] || 0
-        },
-        {
-          name: "Wed",
-          reviews: userData[0].reviewedChanges.reviewsByday["3"] || 0
-        },
-        {
-          name: "Thurs",
-          reviews: userData[0].reviewedChanges.reviewsByday["4"] || 0
-        },
-        {
-          name: "Fri",
-          reviews: userData[0].reviewedChanges.reviewsByday["5"] || 0
-        }
-      ]
-      return data;
-    } else {
-      return null;
-    }
-  }
-
-  const reviewChart = (
-    <FlexLayout padding="0px-10px" style={{width:"100%"}} justifyContent='center' alignItems='center'>
-      <BarChart
-        width={ 500 }
-        height={ 300 }
-        data = {chartData()}
-        margin={ {
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5
-        } }
-      >
-        <CartesianGrid />
-        <XAxis dataKey="name" interval={ 0 }/>
-        <YAxis />
-        <Tooltip  />
-        <Legend />
-        <Bar dataKey="reviews" minPointSize={ 10 }/>
-      </BarChart>
-    </FlexLayout>
-  );
-
   function renderTabContent(tab){
     if(tab === "userStats"){
       return (
         <>
           <Divider />
             <GerritStats userId={userId} startDate={startDate} endDate={endDate} handleSuccessOrFailure={props.handleSuccessOrFailure} handleClose={props.handleClose} name={props.userDetails.name} ref={childRef} />
-          <Divider />  
-            <GraphStats userId={userId} startDate={startDate} endDate={endDate} handleSuccessOrFailure={props.handleSuccessOrFailure} handleClose={props.handleClose} name={props.userDetails.name} ref={child2Ref} />
           <Divider />
         </>
       )
@@ -118,6 +65,15 @@ function UserDetails(props) {
         <>
           <Divider />
             <OpenChanges userId={userId} startDate={startDate} endDate={endDate} handleSuccessOrFailure={props.handleSuccessOrFailure} handleClose={props.handleClose} name={props.userDetails.name} ref={childRef} />
+          <Divider />
+        </>
+      )
+    }
+    if(tab === "reviewsByFilter"){
+      return (
+        <>
+          <Divider />
+            <GraphStats userId={userId} startDate={startDate} endDate={endDate} handleSuccessOrFailure={props.handleSuccessOrFailure} handleClose={props.handleClose} name={props.userDetails.name} ref={childRef} />
           <Divider />
         </>
       )

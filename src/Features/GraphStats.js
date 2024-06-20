@@ -1,4 +1,4 @@
-import { Divider, FlexLayout, StackingLayout, Title } from "@nutanix-ui/prism-reactjs";
+import { DashboardWidgetLayout, Divider, FlexLayout, StackingLayout, Title } from "@nutanix-ui/prism-reactjs";
 import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '@nutanix-ui/recharts';
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from "react";
 
@@ -91,7 +91,14 @@ const GraphStats = forwardRef((props,ref) => {
         <Title size='h3'>Reviews By Day of Week</Title>
       </FlexLayout>
       <Divider />
-      {reviewChart}
+      <DashboardWidgetLayout 
+        bodyContent = {reviewChart}
+        loading={loading}
+        footer={null}
+        bodyContentProps={{itemFlexBasis: '100pc'}}
+        style={{flexBasis:'100%', width: '100%'}}
+        itemSpacing='0px'
+      />
     </StackingLayout>
   );
 
