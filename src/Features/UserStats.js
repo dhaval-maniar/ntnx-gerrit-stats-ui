@@ -5,6 +5,7 @@ import GerritStats from './GerritStats';
 import CrStats from './CrStats';
 import OpenChanges from './OpenChanges';
 import GraphStats from './GraphStats';
+import PendingReviews from './PendingReviews';
 
 const data = [
   {
@@ -22,13 +23,16 @@ const data = [
   {
     title: "Reviews by Filter",
     key: "reviewsByFilter"
+  },
+  {
+    title: "Pending Reviews",
+    key: "pendingReviews"
   }
 ]
 
 function UserDetails(props) {
 
   const childRef = useRef();
-  const child2Ref = useRef();
 
   const [activeTab, setActiveTab] = useState("userStats");
 
@@ -78,6 +82,15 @@ function UserDetails(props) {
         </>
       )
     }
+    if(tab === "pendingReviews"){
+      return (
+        <>
+          <Divider />
+            <PendingReviews userId={userId} startDate={startDate} endDate={endDate} handleSuccessOrFailure={props.handleSuccessOrFailure} handleClose={props.handleClose} name={props.userDetails.name} ref={childRef} />
+          <Divider />
+        </>
+      )
+    }
   }
 
   const bodyContent = (
@@ -88,7 +101,6 @@ function UserDetails(props) {
 
   const callGetData = () => {
     childRef.current.getData();
-    child2Ref.current.getData();
   }
 
   const title = `User Details for ${props.userDetails.name}`;
