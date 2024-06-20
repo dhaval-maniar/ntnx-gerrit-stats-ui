@@ -5,6 +5,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from '@nu
 import GerritStats from './GerritStats';
 import CrStats from './CrStats';
 import OpenChanges from './OpenChanges';
+import GraphStats from './GraphStats';
 
 const data = [
   {
@@ -21,20 +22,10 @@ const data = [
   }
 ]
 
-const oldestChangesColumns = [
-  {
-    title: "Gerrit URL",
-    key: "url"
-  },
-  {
-    title: "Created On",
-    key: "createdOn"
-  }
-]
-
 function UserDetails(props) {
 
   const childRef = useRef();
+  const child2Ref = useRef();
 
   const [activeTab, setActiveTab] = useState("userStats");
 
@@ -47,40 +38,6 @@ function UserDetails(props) {
   const handleTabClick = (tabKey) => {
     setActiveTab(tabKey);
   }
-
-  const oldestChangesData = () => {
-    if(userData && userData[0] && userData[0]['oldestOpenChanges']){
-      let data = userData[0].oldestOpenChanges.map((item)=> {
-        const localDate = new Date(item.created);
-        return {
-          id: item.id,
-          url: <Link style={{color:'#22a5f7'}} data-test-id="inline-with-href" type="inline" href={item.url}>{item.url}</Link>,
-          createdOn: localDate.toString()
-        }
-      });
-      return data;
-    } else {
-      return [];
-    }
-  }
-
-  const oldestChangesTable = (
-    <FlexLayout padding="0px-10px" style={{width:"100%"}}>
-      <Table
-        showCustomScrollbar = {true}
-        border = {false}
-        rowKey="id"
-        dataSource={ oldestChangesData() }
-        columns={ oldestChangesColumns } 
-        wrapperProps={{
-          'data-test-id': 'borderless'
-        }}
-        customMessages={{
-          noData: 'No open changes'
-        }}
-      />
-    </FlexLayout>
-  );
 
   const chartData = () => {
     if(userData && userData[0]){
@@ -141,6 +98,8 @@ function UserDetails(props) {
         <>
           <Divider />
             <GerritStats userId={userId} startDate={startDate} endDate={endDate} handleSuccessOrFailure={props.handleSuccessOrFailure} handleClose={props.handleClose} name={props.userDetails.name} ref={childRef} />
+          <Divider />  
+            <GraphStats userId={userId} startDate={startDate} endDate={endDate} handleSuccessOrFailure={props.handleSuccessOrFailure} handleClose={props.handleClose} name={props.userDetails.name} ref={child2Ref} />
           <Divider />
         </>
       )
@@ -168,23 +127,12 @@ function UserDetails(props) {
   const bodyContent = (
     <StackingLayout itemSpacing="0px">
       {renderTabContent(activeTab)}
-      {/* <FlexLayout itemSpacing="20px" padding="10px">
-        <Title size='h3'>Reviews by Day of the Week</Title>
-      </FlexLayout>
-      <Divider />
-      {reviewChart}
-      <Divider />
-      <FlexLayout itemSpacing="20px" padding="10px">
-        <Title size='h3'>Open Changes</Title>
-      </FlexLayout>
-      <Divider />
-      {oldestChangesTable}
-      <Divider /> */}
     </StackingLayout>
   );
 
   const callGetData = () => {
     childRef.current.getData();
+    child2Ref.current.getData();
   }
 
   const title = `User Details for ${props.userDetails.name}`;
