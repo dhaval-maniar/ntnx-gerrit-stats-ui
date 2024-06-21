@@ -27,11 +27,11 @@ const columns = [
     key: "minusTwoReceived"
   },
   {
-    title: "Comments Recieved",
+    title: "Incoming Comment Threads",
     key: "commentsRecieved"
   },
   {
-    title: "Comments / Change",
+    title: "Comment Threads / Change",
     key: "commentsPerChange"
   },
   {
